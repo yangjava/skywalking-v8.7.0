@@ -17,7 +17,7 @@
  */
 
 package org.apache.skywalking.apm.agent.core.conf;
-
+// 异常ConfigNotFoundException
 public class ConfigNotFoundException extends Exception {
     public ConfigNotFoundException(String message, Throwable cause) {
         super(message, cause);

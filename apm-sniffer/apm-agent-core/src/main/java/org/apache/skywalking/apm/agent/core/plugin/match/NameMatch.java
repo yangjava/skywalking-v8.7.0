@@ -21,13 +21,14 @@ package org.apache.skywalking.apm.agent.core.plugin.match;
 /**
  * Match the class with an explicit class name.
  */
+// 基于完整的类名进⾏匹配
 public class NameMatch implements ClassMatch {
     private String className;
-
+    // 类名匹配
     private NameMatch(String className) {
         this.className = className;
     }
-
+    // 获取被增强的类名
     public String getClassName() {
         return className;
     }

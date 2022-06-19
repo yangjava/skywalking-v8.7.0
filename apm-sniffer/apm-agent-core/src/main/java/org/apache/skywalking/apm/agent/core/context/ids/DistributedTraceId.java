@@ -34,10 +34,12 @@ import lombok.ToString;
  * The <code>DistributedTraceId</code> contains only one string, and can NOT be reset, creating a new instance is the
  * only option.
  */
+// DistributedTraceId 分布式TraceId,用于生成全局的TraceId。在一条链路中(Trace),无论请求分布于多少不同的进程中,这个TraceId都不会改变
 @RequiredArgsConstructor
 @ToString
 @EqualsAndHashCode
 public abstract class DistributedTraceId {
+    // traceId,全局的ID
     @Getter
     private final String id;
 }

@@ -24,6 +24,7 @@ import net.bytebuddy.matcher.ElementMatcher;
 /**
  * All implementations can't direct match the class like {@link NameMatch} did.
  */
+// 间接匹配接⼝
 public interface IndirectMatch extends ClassMatch {
     ElementMatcher.Junction buildJunction();
 

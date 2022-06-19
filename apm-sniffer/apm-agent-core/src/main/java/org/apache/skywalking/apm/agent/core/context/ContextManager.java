@@ -38,6 +38,7 @@ import static org.apache.skywalking.apm.agent.core.conf.Config.Agent.OPERATION_N
  *
  * <p> Also, {@link ContextManager} delegates to all {@link AbstractTracerContext}'s major methods.
  */
+// ContextManager来控制 Context,TraceSegment及其所包含的Span都在同一个线程内，ContextManager使用ThreadLocal来管理TraceSegment的上下文（也就是AbstractTracerContext）
 public class ContextManager implements BootService {
     private static final String EMPTY_TRACE_CONTEXT_ID = "N/A";
     private static final ILog LOGGER = LogManager.getLogger(ContextManager.class);
@@ -45,15 +46,20 @@ public class ContextManager implements BootService {
     private static ThreadLocal<RuntimeContext> RUNTIME_CONTEXT = new ThreadLocal<RuntimeContext>();
     private static ContextManagerExtendService EXTEND_SERVICE;
 
+    // TraceSegment及其所包含的Span都在同一个线程内,ContextManager使用ThreadLocal来管理TraceSegment的上下文(AbstractTracerContext)
     private static AbstractTracerContext getOrCreate(String operationName, boolean forceSampling) {
+        // 从ThreadLocal中获取AbstractTracerContext,如果有就返回,没有就新建
         AbstractTracerContext context = CONTEXT.get();
         if (context == null) {
+
+            // operationName为空创建IgnoredTracerContext
             if (StringUtil.isEmpty(operationName)) {
                 if (LOGGER.isDebugEnable()) {
                     LOGGER.debug("No operation name, ignore this trace.");
                 }
                 context = new IgnoredTracerContext();
             } else {
+                // 调用ContextManagerExtendService的createTraceContext方法创建AbstractTracerContext,并设置到ThreadLocal中
                 if (EXTEND_SERVICE == null) {
                     EXTEND_SERVICE = ServiceManager.INSTANCE.findService(ContextManagerExtendService.class);
                 }
@@ -100,10 +106,12 @@ public class ContextManager implements BootService {
         if (carrier != null && carrier.isValid()) {
             SamplingService samplingService = ServiceManager.INSTANCE.findService(SamplingService.class);
             samplingService.forceSampled();
+            // 一定要强制采样,因为链路中的前置TraceSegment已经存在,否则链路就可能会断开
             context = getOrCreate(operationName, true);
             span = context.createEntrySpan(operationName);
             context.extract(carrier);
         } else {
+            // 不需要强制采样,根据采样率来决定当前链路是否要采样
             context = getOrCreate(operationName, false);
             span = context.createEntrySpan(operationName);
         }

@@ -23,6 +23,7 @@ import java.util.concurrent.atomic.AtomicIntegerArray;
 
 public class AtomicRangeInteger extends Number implements Serializable {
     private static final long serialVersionUID = -4099792402691141643L;
+    // 一个可以原子化操作数组某一个元素的数组封装
     private AtomicIntegerArray values;
 
     private static final int VALUE_OFFSET = 15;
@@ -31,7 +32,9 @@ public class AtomicRangeInteger extends Number implements Serializable {
     private int endValue;
 
     public AtomicRangeInteger(int startValue, int maxValue) {
+        // 简单理解为,创建了一个长度为31的数组
         this.values = new AtomicIntegerArray(31);
+        // 在values这个数组的下标为15(即第16个元素)的位置的值设置为指定值(默认为0)
         this.values.set(VALUE_OFFSET, startValue);
         this.startValue = startValue;
         this.endValue = maxValue - 1;
@@ -41,6 +44,7 @@ public class AtomicRangeInteger extends Number implements Serializable {
         int next;
         do {
             next = this.values.incrementAndGet(VALUE_OFFSET);
+            // 如果取到的next>endValue,就意味着下标越界了,这时候需要通过CAS操作将values的第16个元素的值重置为startValue,即0
             if (next > endValue && this.values.compareAndSet(VALUE_OFFSET, next, startValue)) {
                 return endValue;
             }

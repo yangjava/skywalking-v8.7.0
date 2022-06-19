@@ -31,6 +31,7 @@ import org.apache.skywalking.apm.util.StringUtil;
  * TracingContext}.
  * <p>
  */
+// 分布式追踪要解决的一个重要问题是跨进程调用链的连接，ContextCarrier 的就是为了解决这个问题。
 @Setter(AccessLevel.PACKAGE)
 public class ContextCarrier implements Serializable {
     @Getter

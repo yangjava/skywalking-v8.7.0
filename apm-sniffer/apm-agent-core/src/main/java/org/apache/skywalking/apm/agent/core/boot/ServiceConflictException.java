@@ -17,7 +17,7 @@
  */
 
 package org.apache.skywalking.apm.agent.core.boot;
-
+// 异常ServiceConflictException
 public class ServiceConflictException extends RuntimeException {
     public ServiceConflictException(String message) {
         super(message);

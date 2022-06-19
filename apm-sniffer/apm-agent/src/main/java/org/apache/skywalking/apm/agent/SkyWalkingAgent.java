@@ -56,18 +56,23 @@ import static net.bytebuddy.matcher.ElementMatchers.not;
 /**
  * The main entrance of sky-walking agent, based on javaagent mechanism.
  */
+// skywalking-agent的入口，基于javaagent原理
 public class SkyWalkingAgent {
+    // SkyWalkingAgent日志实现
     private static ILog LOGGER = LogManager.getLogger(SkyWalkingAgent.class);
 
     /**
      * Main entrance. Use byte-buddy transform to enhance all classes, which define in plugins.
      */
+    // Main入口. 使用byte-buddy字节码增强plugins
     public static void premain(String agentArgs, Instrumentation instrumentation) throws PluginException {
         final PluginFinder pluginFinder;
         try {
+            // 初始化配置文件信息
             SnifferConfigInitializer.initializeCoreConfig(agentArgs);
         } catch (Exception e) {
             // try to resolve a new logger, and use the new logger to write the error log here
+            // 初始化配置异常,打印日志信息
             LogManager.getLogger(SkyWalkingAgent.class)
                     .error(e, "SkyWalking agent initialized failure. Shutting down.");
             return;
@@ -77,6 +82,7 @@ public class SkyWalkingAgent {
         }
 
         try {
+            // 加载所有插件
             pluginFinder = new PluginFinder(new PluginBootstrap().loadPlugins());
         } catch (AgentPackageNotFoundException ape) {
             LOGGER.error(ape, "Locate agent.jar failure. Shutting down.");
@@ -86,9 +92,12 @@ public class SkyWalkingAgent {
             return;
         }
 
+        // 使用ByteBuddy技术来进行字节码增强
+        // IS_OPEN_DEBUGGING_CLASS 是否开启debug模式。 当为true时，会把增强过得字节码文件放到/debugging文件夹下，方便debug。
         final ByteBuddy byteBuddy = new ByteBuddy().with(TypeValidation.of(Config.Agent.IS_OPEN_DEBUGGING_CLASS));
-
+        // ByteBuddy增强，忽略某个类
         AgentBuilder agentBuilder = new AgentBuilder.Default(byteBuddy).ignore(
+                // 指定以这些类名为开头的 不属于要增强的范围
                 nameStartsWith("net.bytebuddy.")
                         .or(nameStartsWith("org.slf4j."))
                         .or(nameStartsWith("org.groovy."))
@@ -122,20 +131,23 @@ public class SkyWalkingAgent {
                 LOGGER.error(e, "SkyWalking agent can't active class cache.");
             }
         }
-
+        // 通过插件增强的类
         agentBuilder.type(pluginFinder.buildMatch())
+                    //Transformer 实际增强的方法
                     .transform(new Transformer(pluginFinder))
                     .with(AgentBuilder.RedefinitionStrategy.RETRANSFORMATION)
+                    // 监听器
                     .with(new RedefinitionListener())
                     .with(new Listener())
                     .installOn(instrumentation);
 
         try {
+            // 加载服务
             ServiceManager.INSTANCE.boot();
         } catch (Exception e) {
             LOGGER.error(e, "Skywalking agent boot failure.");
         }
-
+        // 注册JVM的关闭钩子，当服务关闭时，调用shutdown方法释放资源。
         Runtime.getRuntime()
                 .addShutdownHook(new Thread(ServiceManager.INSTANCE::shutdown, "skywalking service shutdown thread"));
     }

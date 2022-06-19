@@ -101,6 +101,7 @@ public class ServiceManagementClient implements BootService, Runnable, GRPCChann
         heartbeatFuture.cancel(true);
     }
 
+    // ServiceManagementClient的run()方法中拿到服务端给的命令，会调用CommandService的receiveCommand()方法去处理
     @Override
     public void run() {
         LOGGER.debug("ServiceManagementClient running, status:{}.", status);

@@ -34,6 +34,7 @@ import static net.bytebuddy.matcher.ElementMatchers.not;
 /**
  * Match the class by the given annotations in class.
  */
+// 基于类注解进⾏匹配，可设置同时匹配多个。
 public class ClassAnnotationMatch implements IndirectMatch {
     private String[] annotations;
 

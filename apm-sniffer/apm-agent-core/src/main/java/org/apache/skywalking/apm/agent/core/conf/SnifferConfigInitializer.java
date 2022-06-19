@@ -60,12 +60,18 @@ public class SnifferConfigInitializer {
      * <p>
      * At the end, `agent.service_name` and `collector.servers` must not be blank.
      */
+    // 如果指定agent路径，加载指定配置信息
+    // 如果没有指定agent路径，默认加载 /config/agent.config
+    // 通过system.properties覆盖配置。该位置的所有键都应以skywalking开头。
+    // `agent.service_name`和`collector.servers`不能为空
     public static void initializeCoreConfig(String agentOptions) {
         AGENT_SETTINGS = new Properties();
+        // 加载配置文件信息
         try (final InputStreamReader configFileStream = loadConfig()) {
             AGENT_SETTINGS.load(configFileStream);
             for (String key : AGENT_SETTINGS.stringPropertyNames()) {
                 String value = (String) AGENT_SETTINGS.get(key);
+                // 占位符处理 ${SW_AGENT_NAME:boot_demo}，就是SW_AGENT_NAME默认为boot_demo
                 AGENT_SETTINGS.put(key, PropertyPlaceholderHelper.INSTANCE.replacePlaceholders(value, AGENT_SETTINGS));
             }
 
@@ -74,11 +80,12 @@ public class SnifferConfigInitializer {
         }
 
         try {
+            // 系统配置项覆盖
             overrideConfigBySystemProp();
         } catch (Exception e) {
             LOGGER.error(e, "Failed to read the system properties.");
         }
-
+        // 使用agentOptions覆盖
         agentOptions = StringUtil.trim(agentOptions, ',');
         if (!StringUtil.isEmpty(agentOptions)) {
             try {
@@ -90,15 +97,17 @@ public class SnifferConfigInitializer {
                 LOGGER.error(e, "Failed to parse the agent options, val is {}.", agentOptions);
             }
         }
-
+        // 配置文件放到Config类中
         initializeConfig(Config.class);
         // reconfigure logger after config initialization
+        // 初始化Log处理
         configureLogger();
         LOGGER = LogManager.getLogger(SnifferConfigInitializer.class);
-
+        // 如果agent.service_name为空，报错
         if (StringUtil.isEmpty(Config.Agent.SERVICE_NAME)) {
             throw new ExceptionInInitializerError("`agent.service_name` is missing.");
         }
+        // collector.backend_service不能为空
         if (StringUtil.isEmpty(Config.Collector.BACKEND_SERVICE)) {
             throw new ExceptionInInitializerError("`collector.backend_service` is missing.");
         }
@@ -118,6 +127,7 @@ public class SnifferConfigInitializer {
      *
      * @param configClass to host the settings for code access.
      */
+    // 初始化配置文件成Config对象信息
     public static void initializeConfig(Class configClass) {
         if (AGENT_SETTINGS == null) {
             LOGGER.error("Plugin configs have to be initialized after core config initialization.");
@@ -180,6 +190,7 @@ public class SnifferConfigInitializer {
      * <p>
      * such as: Property key of `agent.service_name` should be `skywalking.agent.service_name`
      */
+    // 加载系统配置，如果Key是skywalking开头，则覆盖agent.config中的配置
     private static void overrideConfigBySystemProp() throws IllegalAccessException {
         Properties systemProperties = System.getProperties();
         for (final Map.Entry<Object, Object> prop : systemProperties.entrySet()) {
@@ -196,11 +207,14 @@ public class SnifferConfigInitializer {
      *
      * @return the config file {@link InputStream}, or null if not needEnhance.
      */
+    // 加载配置文件
     private static InputStreamReader loadConfig() throws AgentPackageNotFoundException, ConfigNotFoundException {
+        // 加载指定的配置文件 skywalking_config
         String specifiedConfigPath = System.getProperty(SPECIFIED_CONFIG_PATH);
+        // 指定配置文件为空，取默认文件 /config/agent.config
         File configFile = StringUtil.isEmpty(specifiedConfigPath) ? new File(
             AgentPackagePath.getPath(), DEFAULT_CONFIG_FILE_NAME) : new File(specifiedConfigPath);
-
+        // 加载配置文件信息
         if (configFile.exists() && configFile.isFile()) {
             try {
                 LOGGER.info("Config file found in {}.", configFile);

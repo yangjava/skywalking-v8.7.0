@@ -35,18 +35,23 @@ import org.apache.skywalking.apm.network.trace.component.command.ProfileTaskComm
  * <p>
  * Registering command executor for new command in {@link #commandExecutorMap} is required to support new command.
  */
+// 命令执行器控制所有的命令执行，主要是通过Map<命令，命令执行器>中查找到命令执行器，然后执行
 @DefaultImplementor
 public class CommandExecutorService implements BootService, CommandExecutor {
+    // key: 命令的名字 value:对应的命令执行器
     private Map<String, CommandExecutor> commandExecutorMap;
 
+    // 准备: 创建commandExecutorMap
     @Override
     public void prepare() throws Throwable {
         commandExecutorMap = new HashMap<String, CommandExecutor>();
 
         // Profile task executor
+        // 性能追踪命令执行器
         commandExecutorMap.put(ProfileTaskCommand.NAME, new ProfileTaskCommandExecutor());
 
         //Get ConfigurationDiscoveryCommand executor.
+        // 配置变更命令执行器
         commandExecutorMap.put(ConfigurationDiscoveryCommand.NAME, new ConfigurationDiscoveryCommandExecutor());
     }
 
@@ -65,16 +70,19 @@ public class CommandExecutorService implements BootService, CommandExecutor {
 
     }
 
+    // 执行命令
     @Override
     public void execute(final BaseCommand command) throws CommandExecutionException {
         executorForCommand(command).execute(command);
     }
 
     private CommandExecutor executorForCommand(final BaseCommand command) {
+        // 根据command类型找到对应的命令执行器
         final CommandExecutor executor = commandExecutorMap.get(command.getCommand());
         if (executor != null) {
             return executor;
         }
+        // 都不存在执行空命令执行器
         return NoopCommandExecutor.INSTANCE;
     }
 }

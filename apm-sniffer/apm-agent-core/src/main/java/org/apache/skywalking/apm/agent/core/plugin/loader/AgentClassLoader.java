@@ -44,6 +44,7 @@ import org.apache.skywalking.apm.agent.core.plugin.PluginBootstrap;
 /**
  * The <code>AgentClassLoader</code> represents a classloader, which is in charge of finding plugins and interceptors.
  */
+//
 public class AgentClassLoader extends ClassLoader {
 
     static {
@@ -57,10 +58,13 @@ public class AgentClassLoader extends ClassLoader {
     /**
      * The default class loader for the agent.
      */
+    // 静态属性，默认单例。通过getDefault获得
     private static AgentClassLoader DEFAULT_LOADER;
-
+    // classpath 属性，Java 类所在的⽬录。在构造⽅法中，我们可以看到${AGENT_PACKAGE_PATH}/plugins和${AGENT_PACKAGE_PATH}/activations添加到classpath。
     private List<File> classpath;
+    // 所有的allJars
     private List<Jar> allJars;
+    // Jar 读取时的锁
     private ReentrantLock jarScanLock = new ReentrantLock();
 
     public static AgentClassLoader getDefault() {
@@ -72,10 +76,12 @@ public class AgentClassLoader extends ClassLoader {
      *
      * @throws AgentPackageNotFoundException if agent package is not found.
      */
+    // 初始化默认classLoader
     public static void initDefaultLoader() throws AgentPackageNotFoundException {
         if (DEFAULT_LOADER == null) {
             synchronized (AgentClassLoader.class) {
                 if (DEFAULT_LOADER == null) {
+                    // 类加载器AgentClassLoader,父类是PluginBootstrap的ClassLoader()
                     DEFAULT_LOADER = new AgentClassLoader(PluginBootstrap.class.getClassLoader());
                 }
             }
@@ -84,8 +90,13 @@ public class AgentClassLoader extends ClassLoader {
 
     public AgentClassLoader(ClassLoader parent) throws AgentPackageNotFoundException {
         super(parent);
+        // 获取AgentPackagePath的路径
         File agentDictionary = AgentPackagePath.getPath();
         classpath = new LinkedList<>();
+        // 加载AgentPackagePath的路径下的"plugins", "activations"
+        // 加载/plugins和/activations文件夹下的所有插件。
+        // plugins：是对各种框架进行增强的插件，比如springMVC,Dubbo,RocketMq，Mysql等
+        // activations：是对一些支持框架，比如日志、openTracing等工具。
         Config.Plugin.MOUNT.forEach(mountFolder -> classpath.add(new File(agentDictionary, mountFolder)));
     }
 
@@ -169,6 +180,7 @@ public class AgentClassLoader extends ClassLoader {
         return loadedClass;
     }
 
+    // 加载该⽬录下的Jar中的Class⽂件
     private List<Jar> getAllJars() {
         if (allJars == null) {
             jarScanLock.lock();

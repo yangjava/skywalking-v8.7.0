@@ -21,6 +21,7 @@ package org.apache.skywalking.apm.commons.datacarrier.partition;
 /**
  * use threadid % total to partition
  */
+// ProducerThreadPartitioner分区是使用当前线程ID和total取模
 public class ProducerThreadPartitioner<T> implements IDataPartitioner<T> {
     public ProducerThreadPartitioner() {
     }

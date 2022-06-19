@@ -27,7 +27,9 @@ import org.apache.skywalking.apm.util.StringUtil;
  * <p>
  * This kind of span can start and finish multi times in a stack-like invoke line.
  */
+// StackBasedTracingSpan是一个内部具有栈结构的Span，它可以启动和关闭多次在一个类似栈的执行流程中
 public abstract class StackBasedTracingSpan extends AbstractTracingSpan {
+    // 当前栈深stackDepth
     protected int stackDepth;
     protected String peer;
 

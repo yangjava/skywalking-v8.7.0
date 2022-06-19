@@ -17,8 +17,9 @@
  */
 
 package org.apache.skywalking.apm.agent.core.context.trace;
-
+// SpanLayer 是个枚举，可选项有 DB、RPC_FRAMEWORK、HTTP、MQ、CACHE。
 public enum SpanLayer {
+    // 枚举类型
     DB(1), RPC_FRAMEWORK(2), HTTP(3), MQ(4), CACHE(5);
 
     private int code;

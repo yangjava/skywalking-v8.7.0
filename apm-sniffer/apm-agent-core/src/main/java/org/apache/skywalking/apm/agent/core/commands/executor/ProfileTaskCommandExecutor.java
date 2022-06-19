@@ -29,6 +29,7 @@ import org.apache.skywalking.apm.network.trace.component.command.ProfileTaskComm
 /**
  * Command executor that executes the {@link ProfileTaskCommand} command
  */
+// 性能追踪命令执行器
 public class ProfileTaskCommandExecutor implements CommandExecutor {
 
     @Override

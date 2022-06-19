@@ -38,7 +38,7 @@ import org.apache.skywalking.apm.network.language.agent.v3.JVMMetricCollection;
 import org.apache.skywalking.apm.network.language.agent.v3.JVMMetricReportServiceGrpc;
 
 import static org.apache.skywalking.apm.agent.core.conf.Config.Collector.GRPC_UPSTREAM_TIMEOUT;
-
+// 将JVM信息发送给OAP
 @DefaultImplementor
 public class JVMMetricsSender implements BootService, Runnable, GRPCChannelListener {
     private static final ILog LOGGER = LogManager.getLogger(JVMMetricsSender.class);
@@ -50,6 +50,7 @@ public class JVMMetricsSender implements BootService, Runnable, GRPCChannelListe
 
     @Override
     public void prepare() {
+        // 初始化queue,默认最多存储600个数据
         queue = new LinkedBlockingQueue<>(Config.Jvm.BUFFER_SIZE);
         ServiceManager.INSTANCE.findService(GRPCChannelManager.class).addChannelListener(this);
     }
@@ -67,17 +68,20 @@ public class JVMMetricsSender implements BootService, Runnable, GRPCChannelListe
         }
     }
 
+    // 负责将JVM信息发送给OAP，OAP返回的Command交给CommandService去处理
     @Override
     public void run() {
         if (status == GRPCChannelStatus.CONNECTED) {
             try {
                 JVMMetricCollection.Builder builder = JVMMetricCollection.newBuilder();
                 LinkedList<JVMMetric> buffer = new LinkedList<>();
+                // 将queue中的数据移到buffer中
                 queue.drainTo(buffer);
                 if (buffer.size() > 0) {
                     builder.addAllMetrics(buffer);
                     builder.setService(Config.Agent.SERVICE_NAME);
                     builder.setServiceInstance(Config.Agent.INSTANCE_NAME);
+                    // 发送到OAP,OAP返回的Command交给CommandService去处理
                     Commands commands = stub.withDeadlineAfter(GRPC_UPSTREAM_TIMEOUT, TimeUnit.SECONDS)
                                             .collect(builder.build());
                     ServiceManager.INSTANCE.findService(CommandService.class).receiveCommand(commands);

@@ -30,16 +30,19 @@ public interface QueueBuffer<T> {
      * @param data to add.
      * @return true if saved
      */
+    // 保存数据到队列中
     boolean save(T data);
 
     /**
      * Set different strategy when queue is full.
      */
+    // 设置队列满时的处理策略
     void setStrategy(BufferStrategy strategy);
 
     /**
      * Obtain the existing data from the queue
      */
+    // 队列中的数据放到consumeList中并清空队列
     void obtain(List<T> consumeList);
 
     int getBufferSize();

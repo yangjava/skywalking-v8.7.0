@@ -17,9 +17,11 @@
  */
 
 package org.apache.skywalking.apm.network.trace.component;
-
+// 组件的实现类，包含组件id和组件name
 public class OfficialComponent implements Component {
+    // 组件id
     private int id;
+    // 组件name
     private String name;
 
     public OfficialComponent(int id, String name) {

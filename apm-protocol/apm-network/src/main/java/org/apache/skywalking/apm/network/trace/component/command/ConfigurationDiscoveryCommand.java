@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.skywalking.apm.network.common.v3.Command;
 import org.apache.skywalking.apm.network.common.v3.KeyStringValuePair;
-
+// 当前版本SkyWalking Agent支持运行时动态调整配置
 public class ConfigurationDiscoveryCommand extends BaseCommand implements Serializable, Deserializable<ConfigurationDiscoveryCommand> {
     public static final Deserializable<ConfigurationDiscoveryCommand> DESERIALIZER = new ConfigurationDiscoveryCommand(
         "", "", new ArrayList<>());
@@ -34,6 +34,7 @@ public class ConfigurationDiscoveryCommand extends BaseCommand implements Serial
     /*
      * If config is unchanged, then could response the same uuid, and config is not required.
      */
+    // 如果配置没有变,那么OAP返回的UUID就是一样的
     private String uuid;
     /*
      * The configuration of service.

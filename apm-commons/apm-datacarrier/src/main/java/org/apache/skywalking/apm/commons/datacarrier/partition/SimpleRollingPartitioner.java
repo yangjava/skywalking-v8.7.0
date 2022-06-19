@@ -21,6 +21,7 @@ package org.apache.skywalking.apm.commons.datacarrier.partition;
 /**
  * use normal int to rolling.
  */
+// SimpleRollingPartitioner分区是每次+1和total取模
 public class SimpleRollingPartitioner<T> implements IDataPartitioner<T> {
     @SuppressWarnings("NonAtomicVolatileUpdate")
     private volatile int i = 0;

@@ -29,6 +29,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+// 插件定义配置，读取skywalking-plugin.def⽂件，⽣成插件定义pluginDefine数组
 public enum PluginCfg {
     INSTANCE;
 
@@ -37,15 +38,18 @@ public enum PluginCfg {
     private List<PluginDefine> pluginClassList = new ArrayList<PluginDefine>();
     private PluginSelector pluginSelector = new PluginSelector();
 
+    // 读取 skywalking-plugin.def ⽂件，添加到 pluginClassList
     void load(InputStream input) throws IOException {
         try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(input));
             String pluginDefine;
             while ((pluginDefine = reader.readLine()) != null) {
                 try {
+                    // 如果是# 表示注释，忽略
                     if (pluginDefine.trim().length() == 0 || pluginDefine.startsWith("#")) {
                         continue;
                     }
+                    // 解析文件为PluginDefine
                     PluginDefine plugin = PluginDefine.build(pluginDefine);
                     pluginClassList.add(plugin);
                 } catch (IllegalPluginDefineException e) {

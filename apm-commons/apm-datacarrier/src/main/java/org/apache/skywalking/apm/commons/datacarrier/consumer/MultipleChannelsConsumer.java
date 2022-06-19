@@ -27,6 +27,7 @@ import org.apache.skywalking.apm.commons.datacarrier.buffer.QueueBuffer;
  * MultipleChannelsConsumer represent a single consumer thread, but support multiple channels with their {@link
  * IConsumer}s
  */
+// MultipleChannelsConsumer代表一个单消费者线程，但支持多个Channels和它们的消费者
 public class MultipleChannelsConsumer extends Thread {
     private volatile boolean running;
     private volatile ArrayList<Group> consumeTargets;
@@ -70,6 +71,7 @@ public class MultipleChannelsConsumer extends Thread {
     }
 
     private boolean consume(Group target, List consumeList) {
+        // 遍历channels中的buffer,将buffer中的数据放到consumeList中,并清空buffer
         for (int i = 0; i < target.channels.getChannelSize(); i++) {
             QueueBuffer buffer = target.channels.getBuffer(i);
             buffer.obtain(consumeList);
@@ -77,6 +79,7 @@ public class MultipleChannelsConsumer extends Thread {
 
         if (!consumeList.isEmpty()) {
             try {
+                // 调用消费者的消费逻辑
                 target.consumer.consume(consumeList);
             } catch (Throwable t) {
                 target.consumer.onError(consumeList, t);
@@ -111,9 +114,11 @@ public class MultipleChannelsConsumer extends Thread {
     void shutdown() {
         running = false;
     }
-
+    // 一个Group中包含一个Consumer和一个Channels，一个Channels包含多个Buffer，Consumer会消费Channels中所有的Buffer
     private static class Group {
+        // 一个channels对应多个buffer
         private Channels channels;
+        // consumer会消费channels中所有的buffer
         private IConsumer consumer;
 
         public Group(Channels channels, IConsumer consumer) {

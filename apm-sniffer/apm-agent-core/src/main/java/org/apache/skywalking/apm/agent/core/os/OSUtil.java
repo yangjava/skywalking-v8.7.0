@@ -29,11 +29,15 @@ import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
 import org.apache.skywalking.apm.network.common.v3.KeyStringValuePair;
-
+// OS工具类
 public class OSUtil {
+    // 获取操作系统名称
     private static volatile String OS_NAME;
+    // 获取操作系统HOST_NAME
     private static volatile String HOST_NAME;
+    // 获取操作系统IPV4列表
     private static volatile List<String> IPV4_LIST;
+    // 获取进程号
     private static volatile int PROCESS_NO = 0;
 
     public static String getOsName() {

@@ -25,6 +25,7 @@ import org.apache.skywalking.apm.agent.core.context.ids.DistributedTraceId;
  * The <code>ContextSnapshot</code> is a snapshot for current context. The snapshot carries the info for building
  * reference between two segments in two thread, but have a causal relationship.
  */
+// 除了跨进程，跨线程也是需要支持的，例如异步线程（内存中的消息队列）在Java中很常见。跨线程和跨进程十分相似，都需要传播上下文，唯一的区别是，跨线程不需要序列化。
 @Getter
 public class ContextSnapshot {
     private DistributedTraceId traceId;

@@ -31,10 +31,13 @@ import org.apache.skywalking.apm.network.language.agent.v3.SegmentObject;
  * A {@link TraceSegment} means the segment, which exists in current {@link Thread}. And the distributed trace is formed
  * by multi {@link TraceSegment}s, because the distributed trace crosses multi-processes, multi-threads. <p>
  */
+// Trace Segment 是 SkyWalking 中特有的概念，通常指在支持多线程的语言中，一个线程中归属于同一个操作的所有 Span 的聚合。这些 Span 具有相同的唯一标识SegmentID。
+// Trace不是一个具体的数据模型,而是多个Segment串起来表示的逻辑对象
 public class TraceSegment {
     /**
      * The id of this trace segment. Every segment has its unique-global-id.
      */
+    // 每个segment都有一个全局唯一的id
     private String traceSegmentId;
 
     /**
@@ -44,12 +47,14 @@ public class TraceSegment {
      * <p>
      * This field will not be serialized. Keeping this field is only for quick accessing.
      */
+    // 此 Trace Segment 的上游引用。对于大多数上游是 RPC 调用的情况，Refs只有一个元素，但如果是消息队列或批处理框架，上游可能会是多个应用服务，所以就会存在多个元素。
     private TraceSegmentRef ref;
 
     /**
      * The spans belong to this trace segment. They all have finished. All active spans are hold and controlled by
      * "skywalking-api" module.
      */
+    // 用于存储，从属于此 Trace Segment 的 Span 的集合。
     private List<AbstractTracingSpan> spans;
 
     /**
@@ -57,17 +62,19 @@ public class TraceSegment {
      * element, because only one parent {@link TraceSegment} exists, but, in batch scenario, the num becomes greater
      * than 1, also meaning multi-parents {@link TraceSegment}. But we only related the first parent TraceSegment.
      */
+    // 此 Trace Segment 的 Trace Id。大多数时候它只包含一个元素，但如果是消息队列或批处理框架，上游是多个应用服务，会存在多个元素。
     private DistributedTraceId relatedGlobalTraceId;
-
+    // 是否忽略。如果Ignore 为true，则此Trace Segment 不会上传到SkyWalking 后端。
     private boolean ignore = false;
-
+    // 从属于此 Trace Segment 的 Span 数量限制，初始化大小可以通过config.agent.span_limit_per_segment 参数来配置，默认长度为300。若超过配置值，在创建新的 Span 的时候，会变成 NoopSpan。NoopSpan 表示没有任何实际操作的 Span 实现，用于保持内存和GC成本尽可能低。
     private boolean isSizeLimited = false;
-
+    // 此 Trace Segment 的创建时间。
     private final long createTime;
 
     /**
      * Create a default/empty trace segment, with current time as start time, and generate a new segment id.
      */
+    // 创建一个空的trace segment,生成一个新的segment id
     public TraceSegment() {
         this.traceSegmentId = GlobalIdGenerator.generate();
         this.spans = new LinkedList<>();
@@ -80,6 +87,7 @@ public class TraceSegment {
      *
      * @param refSegment {@link TraceSegmentRef}
      */
+    // 设置当前segment的parent segment
     public void ref(TraceSegmentRef refSegment) {
         if (null == ref) {
             this.ref = refSegment;
@@ -89,6 +97,7 @@ public class TraceSegment {
     /**
      * Establish the line between this segment and the relative global trace id.
      */
+    // 将当前segment关联到某一条trace上
     public void relatedGlobalTrace(DistributedTraceId distributedTraceId) {
         if (relatedGlobalTraceId instanceof NewDistributedTraceId) {
             this.relatedGlobalTraceId = distributedTraceId;
@@ -99,6 +108,7 @@ public class TraceSegment {
      * After {@link AbstractSpan} is finished, as be controller by "skywalking-api" module, notify the {@link
      * TraceSegment} to archive it.
      */
+    // 添加span
     public void archive(AbstractTracingSpan finishedSpan) {
         spans.add(finishedSpan);
     }
@@ -106,6 +116,7 @@ public class TraceSegment {
     /**
      * Finish this {@link TraceSegment}. <p> return this, for chaining
      */
+    // finish()需要传入isSizeLimited，SkyWalking中限制了Segment中Span的数量，默认是最大是300，上层调用finish()方法时会判断此时该Segment中的Span是否到达上限
     public TraceSegment finish(boolean isSizeLimited) {
         this.isSizeLimited = isSizeLimited;
         return this;

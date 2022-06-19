@@ -20,23 +20,25 @@ package org.apache.skywalking.apm.agent.core.plugin;
 
 import org.apache.skywalking.apm.agent.core.plugin.exception.IllegalPluginDefineException;
 import org.apache.skywalking.apm.util.StringUtil;
-
+// 插件定义:作用是获取.def文件信息,按照name=defineClass格式进行切分
 public class PluginDefine {
     /**
      * Plugin name.
      */
+    // 插件名称
     private String name;
 
     /**
      * The class name of plugin defined.
      */
+    // 插件类名
     private String defineClass;
 
     private PluginDefine(String name, String defineClass) {
         this.name = name;
         this.defineClass = defineClass;
     }
-
+    // 按照key=value方式获取
     public static PluginDefine build(String define) throws IllegalPluginDefineException {
         if (StringUtil.isEmpty(define)) {
             throw new IllegalPluginDefineException(define);

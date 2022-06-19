@@ -27,6 +27,7 @@ import java.util.concurrent.ArrayBlockingQueue;
  * This implementation has better performance in server side. We are still trying to research whether this is suitable
  * for agent side, which is more sensitive about blocks.
  */
+// ArrayBlockingQueueBuffer是使用JDK的ArrayBlockingQueue实现的
 public class ArrayBlockingQueueBuffer<T> implements QueueBuffer<T> {
     private BufferStrategy strategy;
     private ArrayBlockingQueue<T> queue;

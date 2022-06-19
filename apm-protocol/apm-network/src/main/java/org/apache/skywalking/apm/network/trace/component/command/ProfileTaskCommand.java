@@ -22,7 +22,7 @@ import org.apache.skywalking.apm.network.common.v3.Command;
 import org.apache.skywalking.apm.network.common.v3.KeyStringValuePair;
 
 import java.util.List;
-
+// 在SkyWalking UI性能剖析功能中，新建任务，会下发给Agent性能追踪任务
 public class ProfileTaskCommand extends BaseCommand implements Serializable, Deserializable<ProfileTaskCommand> {
     public static final Deserializable<ProfileTaskCommand> DESERIALIZER = new ProfileTaskCommand("", "", "", 0, 0, 0, 0, 0, 0);
     public static final String NAME = "ProfileTaskQuery";

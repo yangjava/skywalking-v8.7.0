@@ -32,8 +32,9 @@ import org.apache.skywalking.apm.network.trace.component.Component;
  * <p>
  * Such as: Tomcat Embed - Dubbox The <code>EntrySpan</code> represents the Dubbox span.
  */
+// EntrySpan 代表一个应用服务的提供端或服务端的人口端点，如 Web 容器的服务端的入口、RPC 服务器的消费者、消息队列的消费者
 public class EntrySpan extends StackBasedTracingSpan {
-
+    // 当前最大栈深currentMaxDepth
     private int currentMaxDepth;
 
     public EntrySpan(int spanId, int parentSpanId, String operationName, TracingContext owner) {
@@ -44,11 +45,14 @@ public class EntrySpan extends StackBasedTracingSpan {
     /**
      * Set the {@link #startTime}, when the first start, which means the first service provided.
      */
+    // EntrySpan只会由第一个插件创建,但是后面的插件复用EntrySpan时都要来调用一次start方法,因为每一个插件都认为自己是第一个创建这个EntrySpan的
     @Override
     public EntrySpan start() {
+        // currentMaxDepth = stackDepth = 1时,才调用start方法记录启动时间
         if ((currentMaxDepth = ++stackDepth) == 1) {
             super.start();
         }
+        // 复用span时清空之前插件记录的span信息
         clearWhenRestart();
         return this;
     }

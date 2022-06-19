@@ -17,7 +17,9 @@
  */
 
 package org.apache.skywalking.apm.commons.datacarrier.buffer;
-
+// BufferStrategy定义了队列满时的处理策略
 public enum BufferStrategy {
+    // BLOCKING  阻塞,等待队列有空位置
+    // IF_POSSIBLE  能放就放,不能放就算了
     BLOCKING, IF_POSSIBLE
 }

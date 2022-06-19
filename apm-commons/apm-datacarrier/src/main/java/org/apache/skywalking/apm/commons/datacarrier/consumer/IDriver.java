@@ -23,6 +23,7 @@ import org.apache.skywalking.apm.commons.datacarrier.buffer.Channels;
 /**
  * The driver of consumer.
  */
+// 消费者驱动
 public interface IDriver {
     boolean isRunning(Channels channels);
 

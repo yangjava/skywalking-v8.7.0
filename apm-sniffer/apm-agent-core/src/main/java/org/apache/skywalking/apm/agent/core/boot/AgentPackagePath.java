@@ -30,11 +30,13 @@ import org.apache.skywalking.apm.agent.core.logging.api.LogManager;
  * The path is the required metadata for agent core looking up the plugins and toolkit activations. If the lookup
  * mechanism fails, the agent will exit directly.
  */
+// AgentPackagePath用于加载指定目录的 jar 插件，即agent.jar(默认加载的插件目录 plugins 和 activations)
 public class AgentPackagePath {
     private static final ILog LOGGER = LogManager.getLogger(AgentPackagePath.class);
 
     private static File AGENT_PACKAGE_PATH;
 
+    // 获取加载路径
     public static File getPath() throws AgentPackageNotFoundException {
         if (AGENT_PACKAGE_PATH == null) {
             AGENT_PACKAGE_PATH = findPath();

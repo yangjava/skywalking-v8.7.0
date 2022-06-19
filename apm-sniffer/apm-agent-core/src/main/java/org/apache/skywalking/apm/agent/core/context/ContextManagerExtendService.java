@@ -34,7 +34,7 @@ import org.apache.skywalking.apm.util.StringUtil;
 
 @DefaultImplementor
 public class ContextManagerExtendService implements BootService, GRPCChannelListener {
-
+    // 哪些后缀的请求不需要追踪
     private volatile String[] ignoreSuffixArray = new String[0];
 
     private volatile GRPCChannelStatus status = GRPCChannelStatus.DISCONNECT;
@@ -77,16 +77,18 @@ public class ContextManagerExtendService implements BootService, GRPCChannelList
         /*
          * Don't trace anything if the backend is not available.
          */
+        // 如果OAP挂了不采样且网络连接断开,创建IgnoredTracerContext
         if (!Config.Agent.KEEP_TRACING && GRPCChannelStatus.DISCONNECT.equals(status)) {
             return new IgnoredTracerContext();
         }
-
+        // operationName的后缀名在ignoreSuffixArray中,创建IgnoredTracerContext
         int suffixIdx = operationName.lastIndexOf(".");
         if (suffixIdx > -1 && Arrays.stream(ignoreSuffixArray)
                                     .anyMatch(a -> a.equals(operationName.substring(suffixIdx)))) {
             context = new IgnoredTracerContext();
         } else {
             SamplingService samplingService = ServiceManager.INSTANCE.findService(SamplingService.class);
+            // 如果是强制采样或尝试采样返回true,创建TracingContext
             if (forceSampling || samplingService.trySampling(operationName)) {
                 context = new TracingContext(operationName, spanLimitWatcher);
             } else {

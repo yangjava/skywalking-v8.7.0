@@ -40,6 +40,7 @@ import java.util.List;
  * It provides the outline of enhancing the target class. If you want to know more about enhancing, you should go to see
  * {@link ClassEnhancePluginDefine}
  */
+// 类增强插件定义抽象基类。不同插件通过实现AbstractClassEnhancePluginDefine抽象类，定义不同框架的切⾯，记录调⽤链路。
 public abstract class AbstractClassEnhancePluginDefine {
     private static final ILog LOGGER = LogManager.getLogger(AbstractClassEnhancePluginDefine.class);
 

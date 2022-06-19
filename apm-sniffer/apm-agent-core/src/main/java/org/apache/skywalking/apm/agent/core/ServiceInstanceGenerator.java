@@ -25,7 +25,7 @@ import org.apache.skywalking.apm.agent.core.conf.Config;
 import org.apache.skywalking.apm.agent.core.os.OSUtil;
 
 import static org.apache.skywalking.apm.util.StringUtil.isEmpty;
-
+// 如果配置文件中未指定实例名，ServiceInstanceGenerator会生成一个实例名
 @Getter
 public class ServiceInstanceGenerator implements BootService {
     @Override

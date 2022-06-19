@@ -23,6 +23,7 @@ import org.apache.skywalking.apm.network.trace.component.command.BaseCommand;
  * Command executor that can handle a given command, implementations are required to be stateless, i.e. the previous
  * execution of a command cannot affect the next execution of another command.
  */
+// 命令执行器接口，主要负责执行命令
 public interface CommandExecutor {
     /**
      * @param command the command that is to be executed

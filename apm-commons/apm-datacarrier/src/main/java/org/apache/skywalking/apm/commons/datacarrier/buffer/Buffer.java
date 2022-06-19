@@ -24,9 +24,13 @@ import org.apache.skywalking.apm.commons.datacarrier.common.AtomicRangeInteger;
 /**
  * Self implementation ring queue.
  */
+// Buffer是一个环形队列
 public class Buffer<T> implements QueueBuffer<T> {
+    // 队列数据都存储到数组中
     private final Object[] buffer;
+    // 队列满时的处理策略
     private BufferStrategy strategy;
+    // 索引 从 start值（int类型）开始递增，当 value 递增到 end值（int类型）时，value字段会被重置为 start值，从而实现环形指针的效果。
     private AtomicRangeInteger index;
 
     Buffer(int bufferSize, BufferStrategy strategy) {

@@ -22,6 +22,7 @@ import org.apache.skywalking.apm.network.common.v3.Command;
 /**
  * Indicates that the execution of a command failed
  */
+// 异常CommandExecutionException
 public class CommandExecutionException extends Throwable {
     private final Command command;
 

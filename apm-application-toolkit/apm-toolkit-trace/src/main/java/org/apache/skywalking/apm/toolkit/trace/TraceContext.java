@@ -32,6 +32,7 @@ public class TraceContext {
      *
      * @return traceId, if it exists, or empty {@link String}.
      */
+    // 可以获取当前追踪的traceId
     public static String traceId() {
         return "";
     }
@@ -41,6 +42,7 @@ public class TraceContext {
      *
      * @return segmentId, if it exists, or empty {@link String}.
      */
+    // 可以获取当前追踪的segmentId
     public static String segmentId() {
         return "";
     }
@@ -51,6 +53,7 @@ public class TraceContext {
      *
      * @return spanId, if it exists, or empty {@link String}.
      */
+    // 可以获取当前追踪的spanId
     public static int spanId() {
         return -1;
     }
@@ -60,6 +63,7 @@ public class TraceContext {
      *
      * @return custom data value.
      */
+    // 获取trace context的自定义key/value
     public static Optional<String> getCorrelation(String key) {
         return Optional.empty();
     }
@@ -69,6 +73,7 @@ public class TraceContext {
      *
      * @return previous value if it exists.
      */
+    // 自定义key/value设置到trace context
     public static Optional<String> putCorrelation(String key, String value) {
         return Optional.empty();
     }

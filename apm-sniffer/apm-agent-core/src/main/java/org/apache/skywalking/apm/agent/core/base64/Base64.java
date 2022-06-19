@@ -23,6 +23,7 @@ import java.nio.charset.StandardCharsets;
 /**
  * A wrapper of {@link java.util.Base64} with convenient conversion methods between {@code byte[]} and {@code String}
  */
+// Base64 工具类
 public final class Base64 {
     private static final java.util.Base64.Decoder DECODER = java.util.Base64.getDecoder();
     private static final java.util.Base64.Encoder ENCODER = java.util.Base64.getEncoder();

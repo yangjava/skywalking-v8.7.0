@@ -45,26 +45,32 @@ public abstract class AbstractTracingSpan implements AbstractSpan {
     /**
      * Span id starts from 0.
      */
+    // span id从0开始
     protected int spanId;
     /**
      * Parent span id starts from 0. -1 means no parent span.
      */
+    // parent span id从0开始.-1代表没有parent span
     protected int parentSpanId;
+    // span上的tag
     protected List<TagValuePair> tags;
     protected String operationName;
     protected SpanLayer layer;
     /**
      * The span has been tagged in async mode, required async stop to finish.
      */
+    // 表示当前异步操作是否已经开始
     protected volatile boolean isInAsyncMode = false;
     /**
      * The flag represents whether the span has been async stopped
      */
+    // 表示当前异步操作是否已经结束
     private volatile boolean isAsyncStopped = false;
 
     /**
      * The context to which the span belongs
      */
+    // TracingContext用于管理一条链路上的segment和span
     protected final TracingContext owner;
 
     /**
@@ -92,6 +98,7 @@ public abstract class AbstractTracingSpan implements AbstractSpan {
      * element, but if this segment is a start span of batch process, the segment faces multi parents, at this moment,
      * we use this {@link #refs} to link them.
      */
+    // 用于当前span指定自己所在的segment的前一个segment,除非这个span所在的segment是整条链路上的第一个segment
     protected List<TraceSegmentRef> refs;
 
     /**
@@ -143,6 +150,7 @@ public abstract class AbstractTracingSpan implements AbstractSpan {
      *
      * @param owner of the Span.
      */
+    // span结束的时候,添加到TraceSegment的spans中
     public boolean finish(TraceSegment owner) {
         this.endTime = System.currentTimeMillis();
         owner.archive(this);

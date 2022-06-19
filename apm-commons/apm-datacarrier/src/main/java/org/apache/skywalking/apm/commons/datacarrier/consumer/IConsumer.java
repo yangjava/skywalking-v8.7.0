@@ -19,7 +19,7 @@
 package org.apache.skywalking.apm.commons.datacarrier.consumer;
 
 import java.util.List;
-
+// 消费者读取DataCarrier中的数据上报到OAP，IConsumer是消费者的顶层接口
 public interface IConsumer<T> {
     void init();
 

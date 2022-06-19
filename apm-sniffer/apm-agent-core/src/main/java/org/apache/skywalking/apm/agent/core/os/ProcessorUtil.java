@@ -19,8 +19,9 @@
 package org.apache.skywalking.apm.agent.core.os;
 
 import java.lang.management.ManagementFactory;
-
+// 进程工具类
 public class ProcessorUtil {
+    // 操作系统核数
     public static int getNumberOfProcessors() {
         return ManagementFactory.getOperatingSystemMXBean().getAvailableProcessors();
     }

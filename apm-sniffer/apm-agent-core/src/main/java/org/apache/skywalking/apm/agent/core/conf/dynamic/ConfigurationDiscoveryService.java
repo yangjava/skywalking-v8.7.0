@@ -52,7 +52,7 @@ import org.apache.skywalking.apm.util.RunnableWithExceptionProtection;
 import org.apache.skywalking.apm.util.StringUtil;
 
 import static org.apache.skywalking.apm.agent.core.conf.Config.Collector.GRPC_UPSTREAM_TIMEOUT;
-
+// 配置发现服务
 @DefaultImplementor
 public class ConfigurationDiscoveryService implements BootService, GRPCChannelListener {
 
@@ -237,6 +237,7 @@ public class ConfigurationDiscoveryService implements BootService, GRPCChannelLi
     /**
      * Local dynamic configuration center.
      */
+    // 动态配置中心
     public static class Register {
         private final Map<String, WatcherHolder> register = new HashMap<>();
 

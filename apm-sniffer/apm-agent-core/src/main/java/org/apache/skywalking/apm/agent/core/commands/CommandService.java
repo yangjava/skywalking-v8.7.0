@@ -33,17 +33,19 @@ import org.apache.skywalking.apm.network.trace.component.command.BaseCommand;
 import org.apache.skywalking.apm.network.trace.component.command.CommandDeserializer;
 import org.apache.skywalking.apm.network.trace.component.command.UnsupportedCommandException;
 import org.apache.skywalking.apm.util.RunnableWithExceptionProtection;
-
+// Command Scheduler命令的调度器收集OAP返回的Command,然后分发给不同的处理器去处理
 @DefaultImplementor
 public class CommandService implements BootService, Runnable {
 
     private static final ILog LOGGER = LogManager.getLogger(CommandService.class);
-
+    // 命令的处理流程是否在运行
     private volatile boolean isRunning = true;
     private ExecutorService executorService = Executors.newSingleThreadExecutor(
         new DefaultNamedThreadFactory("CommandService")
     );
+    // 待处理命令列表
     private LinkedBlockingQueue<BaseCommand> commands = new LinkedBlockingQueue<>(64);
+    // 命令的序列号缓存
     private CommandSerialNumberCache serialNumberCache = new CommandSerialNumberCache();
 
     @Override
@@ -57,6 +59,7 @@ public class CommandService implements BootService, Runnable {
         );
     }
 
+    // 不断从命令队列(任务队列)里取出任务,交给执行器去执行
     @Override
     public void run() {
         final CommandExecutorService commandExecutorService = ServiceManager.INSTANCE.findService(CommandExecutorService.class);
@@ -64,11 +67,11 @@ public class CommandService implements BootService, Runnable {
         while (isRunning) {
             try {
                 BaseCommand command = commands.take();
-
+                // 同一个命令不要重复执行
                 if (isCommandExecuted(command)) {
                     continue;
                 }
-
+                // 执行command
                 commandExecutorService.execute(command);
                 serialNumberCache.add(command.getSerialNumber());
             } catch (InterruptedException e) {

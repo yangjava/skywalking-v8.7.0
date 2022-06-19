@@ -22,6 +22,7 @@ package org.apache.skywalking.apm.agent.core.boot;
  * The <code>BootService</code> is an interface to all remote, which need to boot when plugin mechanism begins to work.
  * {@link #boot()} will be called when <code>BootService</code> start up.
  */
+// Skywalking的Agent端，也需要跟OAPServer之间进⾏各种交互以提供丰富完善的功能，skywalking中约定，这些功能逻辑要内聚后，封装到不同的BootService中
 public interface BootService {
     void prepare() throws Throwable;
 

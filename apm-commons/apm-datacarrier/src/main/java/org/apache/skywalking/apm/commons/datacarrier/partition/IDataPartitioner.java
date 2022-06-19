@@ -19,7 +19,7 @@
 package org.apache.skywalking.apm.commons.datacarrier.partition;
 
 import org.apache.skywalking.apm.commons.datacarrier.buffer.BufferStrategy;
-
+// 数据分区器 IDataPartitioner有两个实现SimpleRollingPartitioner和ProducerThreadPartitioner
 public interface IDataPartitioner<T> {
     int partition(int total, T data);
 

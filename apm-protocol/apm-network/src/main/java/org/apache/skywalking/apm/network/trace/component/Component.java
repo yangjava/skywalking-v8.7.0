@@ -23,8 +23,10 @@ package org.apache.skywalking.apm.network.trace.component;
  * <p>
  * The supported list is in {@link ComponentsDefine}.
  */
+// 组件接口，有componentId和componentName两个字段
 public interface Component {
+    // 获取componentId
     int getId();
-
+    // 获取componentName
     String getName();
 }

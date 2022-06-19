@@ -17,11 +17,12 @@
  */
 
 package org.apache.skywalking.apm.agent.core.conf;
-
+// skywalking常量
 public class Constants {
+    // 文件分隔符
     public static String PATH_SEPARATOR = System.getProperty("file.separator", "/");
-
+    // 换行分隔符
     public static String LINE_SEPARATOR = System.getProperty("line.separator", "\n");
-
+    // 空字符串
     public static String EMPTY_STRING = "";
 }

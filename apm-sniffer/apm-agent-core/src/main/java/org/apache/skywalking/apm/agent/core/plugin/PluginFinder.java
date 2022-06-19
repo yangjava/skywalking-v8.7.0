@@ -39,20 +39,32 @@ import static net.bytebuddy.matcher.ElementMatchers.not;
  * The <code>PluginFinder</code> represents a finder , which assist to find the one from the given {@link
  * AbstractClassEnhancePluginDefine} list.
  */
+// 插件发现者。其提供 #find(...) ⽅法，获得类增强插件定义
 public class PluginFinder {
+    // 按照类名精确匹配
     private final Map<String, LinkedList<AbstractClassEnhancePluginDefine>> nameMatchDefine = new HashMap<String, LinkedList<AbstractClassEnhancePluginDefine>>();
+    // 通过签名/注解 或者其他条件 间接匹配
     private final List<AbstractClassEnhancePluginDefine> signatureMatchDefine = new ArrayList<AbstractClassEnhancePluginDefine>();
+    // 新增的bootstrap用的
     private final List<AbstractClassEnhancePluginDefine> bootstrapClassMatchDefine = new ArrayList<AbstractClassEnhancePluginDefine>();
 
+    // 插件查找器
+    // nameMatchDefine：通过类名 精确匹配
+    // signatureMatchDefine：通过签名/注解或者其他条件间接匹配
+    // bootstrapClassMatchDefine：新增的bootstrap用的
     public PluginFinder(List<AbstractClassEnhancePluginDefine> plugins) {
+
+        // 循环类增强插件定义对象数组，添加到nameMatchDefine/signatureMatchDefine属性，⽅便#find(...) ⽅法查找AbstractClassEnhancePluginDefine对象。
         for (AbstractClassEnhancePluginDefine plugin : plugins) {
+            // 获取类增强插件定义对象的增强类匹配
             ClassMatch match = plugin.enhanceClass();
 
             if (match == null) {
                 continue;
             }
-
+            // 处理NameMatch为匹配的AbstractClassEnhancePluginDefine对象，添加到nameMatchDefine属性
             if (match instanceof NameMatch) {
+                // NameMatch的增强可以为多个，以ClassName为Key，LinkedList<AbstractClassEnhancePluginDefine>为value
                 NameMatch nameMatch = (NameMatch) match;
                 LinkedList<AbstractClassEnhancePluginDefine> pluginDefines = nameMatchDefine.get(nameMatch.getClassName());
                 if (pluginDefines == null) {
@@ -61,6 +73,7 @@ public class PluginFinder {
                 }
                 pluginDefines.add(plugin);
             } else {
+                // 处理⾮NameMatch为匹配的AbstractClassEnhancePluginDefine对象，添加到signatureMatchDefine属性。
                 signatureMatchDefine.add(plugin);
             }
 
@@ -70,13 +83,15 @@ public class PluginFinder {
         }
     }
 
+    // 获得类增强插件定义AbstractClassEnhancePluginDefine对象
     public List<AbstractClassEnhancePluginDefine> find(TypeDescription typeDescription) {
+        // 以 nameMatchDefine 属性来匹配 AbstractClassEnhancePluginDefine 对象
         List<AbstractClassEnhancePluginDefine> matchedPlugins = new LinkedList<AbstractClassEnhancePluginDefine>();
         String typeName = typeDescription.getTypeName();
         if (nameMatchDefine.containsKey(typeName)) {
             matchedPlugins.addAll(nameMatchDefine.get(typeName));
         }
-
+        // 以 signatureMatchDefine 属性来匹配 AbstractClassEnhancePluginDefine 对象。在这个过程中，会调⽤IndirectMatch#isMatch(TypeDescription) ⽅法，进⾏匹配。
         for (AbstractClassEnhancePluginDefine pluginDefine : signatureMatchDefine) {
             IndirectMatch match = (IndirectMatch) pluginDefine.enhanceClass();
             if (match.isMatch(typeDescription)) {
@@ -86,7 +101,7 @@ public class PluginFinder {
 
         return matchedPlugins;
     }
-
+    // 把所有需要增强的类构建成ElementMatcher，获得全部插件的类匹配，多个插件的类匹配条件以 or 分隔
     public ElementMatcher<? super TypeDescription> buildMatch() {
         ElementMatcher.Junction judge = new AbstractJunction<NamedElement>() {
             @Override

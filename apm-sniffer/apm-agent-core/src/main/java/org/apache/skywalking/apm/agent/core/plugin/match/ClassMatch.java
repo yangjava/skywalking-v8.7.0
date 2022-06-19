@@ -17,6 +17,6 @@
  */
 
 package org.apache.skywalking.apm.agent.core.plugin.match;
-
+// 类匹配
 public interface ClassMatch {
 }

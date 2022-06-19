@@ -32,6 +32,9 @@ import org.apache.skywalking.apm.agent.core.plugin.loader.AgentClassLoader;
 /**
  * The <code>ServiceManager</code> bases on {@link ServiceLoader}, load all {@link BootService} implementations.
  */
+// agent 服务插件定义体系
+// agent 服务插件定义体系，使用@DefaultImplementor 表示一个服务的默认实现，使用@OverrideImplementor 表示一个服务的覆盖实现
+// @OverrideImplementor的value属性用于指定要覆盖服务的默认实现，覆盖实现必须明确指定一个默认实现，且只能覆盖默认实现，也就是说，一个覆盖实现不能去覆盖另一个覆盖实现。
 public enum ServiceManager {
     INSTANCE;
 
@@ -39,8 +42,9 @@ public enum ServiceManager {
     private Map<Class, BootService> bootedServices = Collections.emptyMap();
 
     public void boot() {
+        // 加载所有的bootedServices
         bootedServices = loadAllServices();
-
+        // 执行各生命周期方法
         prepare();
         startup();
         onComplete();
@@ -57,11 +61,13 @@ public enum ServiceManager {
     }
 
     private Map<Class, BootService> loadAllServices() {
+        // 加载所有服务
         Map<Class, BootService> bootedServices = new LinkedHashMap<>();
         List<BootService> allServices = new LinkedList<>();
         load(allServices);
         for (final BootService bootService : allServices) {
             Class<? extends BootService> bootServiceClass = bootService.getClass();
+            // 有@DefaultImplementor注解
             boolean isDefaultImplementor = bootServiceClass.isAnnotationPresent(DefaultImplementor.class);
             if (isDefaultImplementor) {
                 if (!bootedServices.containsKey(bootServiceClass)) {
@@ -70,6 +76,7 @@ public enum ServiceManager {
                     //ignore the default service
                 }
             } else {
+                // 没有@DefaultImplementor注解
                 OverrideImplementor overrideImplementor = bootServiceClass.getAnnotation(OverrideImplementor.class);
                 if (overrideImplementor == null) {
                     if (!bootedServices.containsKey(bootServiceClass)) {
@@ -78,6 +85,7 @@ public enum ServiceManager {
                         throw new ServiceConflictException("Duplicate service define for :" + bootServiceClass);
                     }
                 } else {
+                    // 既没有@DefaultImplementor注解，又没有@DefaultImplementor注解
                     Class<? extends BootService> targetService = overrideImplementor.value();
                     if (bootedServices.containsKey(targetService)) {
                         boolean presentDefault = bootedServices.get(targetService)
