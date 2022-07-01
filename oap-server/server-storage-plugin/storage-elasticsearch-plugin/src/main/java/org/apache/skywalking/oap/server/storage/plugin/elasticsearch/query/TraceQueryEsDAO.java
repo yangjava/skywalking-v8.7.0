@@ -159,10 +159,13 @@ public class TraceQueryEsDAO extends EsDAO implements ITraceQueryDAO {
         return traceBrief;
     }
 
+    // 通过traceId查询,默认segment=200个
     @Override
     public List<SegmentRecord> queryByTraceId(String traceId) throws IOException {
         SearchSourceBuilder sourceBuilder = SearchSourceBuilder.searchSource();
+        // traceId精确匹配
         sourceBuilder.query(QueryBuilders.termQuery(SegmentRecord.TRACE_ID, traceId));
+        // 默认segment=200个
         sourceBuilder.size(segmentQueryMaxSize);
 
         SearchResponse response = getClient().search(

@@ -23,5 +23,6 @@ package org.apache.skywalking.oap.server.library.module;
  * <p>
  * And every {@link ModuleProvider} must provide all the given services of the {@link ModuleDefine}.
  */
+// 服务接口
 public interface Service {
 }

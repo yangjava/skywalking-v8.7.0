@@ -17,7 +17,7 @@
  */
 
 package org.apache.skywalking.oap.server.starter.config;
-
+//ConfigFileNotFoundException 异常
 public class ConfigFileNotFoundException extends Exception {
 
     public ConfigFileNotFoundException(String message) {

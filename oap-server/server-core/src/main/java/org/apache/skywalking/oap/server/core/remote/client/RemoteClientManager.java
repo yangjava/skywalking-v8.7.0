@@ -52,6 +52,7 @@ import org.slf4j.LoggerFactory;
  * This class manages the connections between OAP servers. There is a task schedule that will automatically query a
  * server list from the cluster module. Such as Zookeeper cluster module or Kubernetes cluster module.
  */
+// oapServer集群的管理器,提供集群节点信息并定时刷新
 public class RemoteClientManager implements Service {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RemoteClientManager.class);

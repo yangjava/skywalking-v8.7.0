@@ -37,17 +37,23 @@ import org.yaml.snakeyaml.Yaml;
  * <p>
  * At last, override setting by system.properties and system.envs if the key matches moduleName.provideName.settingKey.
  */
+// application.yml加载类, 三层结构:模块定义名.模块提供名.属性key
+// ApplicationConfiguration 的辅助类，将 application.yml 配置文件加载到内存， 设置 selector 对应的 Provider 的配置信息
 @Slf4j
 public class ApplicationConfigLoader implements ConfigLoader<ApplicationConfiguration> {
+    // 当不配置模块提供者时，使用"-"
     private static final String DISABLE_SELECTOR = "-";
+    // 该字段选择模块提供者
     private static final String SELECTOR = "selector";
 
     private final Yaml yaml = new Yaml();
 
     @Override
     public ApplicationConfiguration load() throws ConfigFileNotFoundException {
+        // 初始化ApplicationConfiguration对象
         ApplicationConfiguration configuration = new ApplicationConfiguration();
         this.loadConfig(configuration);
+        // 读取系统属性对值进行覆盖处理, 使用的是
         this.overrideConfigBySystemEnv(configuration);
         return configuration;
     }
@@ -55,10 +61,15 @@ public class ApplicationConfigLoader implements ConfigLoader<ApplicationConfigur
     @SuppressWarnings("unchecked")
     private void loadConfig(ApplicationConfiguration configuration) throws ConfigFileNotFoundException {
         try {
+            // 读取application.yml
             Reader applicationReader = ResourceUtils.read("application.yml");
+            // 将 application.yml 转换为 ModuleName, Map<String, Object> 的结构
             Map<String, Map<String, Object>> moduleConfig = yaml.loadAs(applicationReader, Map.class);
+
             if (CollectionUtils.isNotEmpty(moduleConfig)) {
+                // 读取每个ModuleName下的 Map, 先读取到selector属性, 如果不存在就跳过此端配置
                 selectConfig(moduleConfig);
+
                 moduleConfig.forEach((moduleName, providerConfig) -> {
                     if (providerConfig.size() > 0) {
                         log.info("Get a module define from application.yml, module name: {}", moduleName);
@@ -130,7 +141,7 @@ public class ApplicationConfigLoader implements ConfigLoader<ApplicationConfigur
             overrideModuleSettings(configuration, prop.getKey().toString(), prop.getValue().toString());
         }
     }
-
+    // 对 selector 属性值(例如: ${SW_CONFIGURATION:none} )处理, 按照 系统属性> 环境变量 > 默认值 的顺序提取变量值
     private void selectConfig(final Map<String, Map<String, Object>> moduleConfiguration) {
         Iterator<Map.Entry<String, Map<String, Object>>> moduleIterator = moduleConfiguration.entrySet().iterator();
         while (moduleIterator.hasNext()) {

@@ -23,6 +23,8 @@ import java.util.List;
 /**
  * Alarm call back will be called by alarm implementor, after it decided alarm should be sent.
  */
+// 告警信息持久化或推送的接口
 public interface AlarmCallback {
+    // 用于处理告警信息
     void doAlarm(List<AlarmMessage> alarmMessage);
 }

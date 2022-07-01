@@ -21,6 +21,7 @@ package org.apache.skywalking.oap.server.core.alarm;
 import org.apache.skywalking.oap.server.core.analysis.metrics.Metrics;
 import org.apache.skywalking.oap.server.library.module.ModuleDefineHolder;
 
+// 告警服务数据入口，判断有无初始化alarm模块，找到NotifyHandler，传送数据
 public class AlarmEntrance {
     private ModuleDefineHolder moduleDefineHolder;
     private MetricsNotify metricsNotify;

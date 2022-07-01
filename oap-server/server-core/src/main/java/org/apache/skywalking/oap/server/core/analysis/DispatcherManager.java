@@ -32,7 +32,7 @@ import org.apache.skywalking.oap.server.core.UnexpectedException;
 import org.apache.skywalking.oap.server.core.source.ISource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+// manager里面包含动态生成的Dispatcher和源码定义的 Dispatcher,是一个map{scopeId,Dispatcher} ,请求携带scopeid并查找相应的Dispatcher处理数据
 public class DispatcherManager implements DispatcherDetectorListener {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DispatcherManager.class);

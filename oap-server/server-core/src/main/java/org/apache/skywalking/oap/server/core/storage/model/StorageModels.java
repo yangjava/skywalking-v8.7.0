@@ -38,6 +38,7 @@ import org.apache.skywalking.oap.server.core.storage.annotation.ValueColumnMetad
 /**
  * StorageModels manages all models detected by the core.
  */
+// 模型存储的容器,一个模型对应一个索引
 @Slf4j
 public class StorageModels implements IModelManager, ModelCreator, ModelManipulator {
     private final List<Model> models;

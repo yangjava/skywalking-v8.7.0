@@ -25,6 +25,7 @@ import org.apache.skywalking.oap.server.library.module.ModuleDefine;
  * <p>
  * SkyWalking supports alarm implementation pluggable.
  */
+// 告警管理器定义类
 public class AlarmModule extends ModuleDefine {
     public static final String NAME = "alarm";
 

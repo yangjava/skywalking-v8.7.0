@@ -37,7 +37,7 @@ import org.apache.skywalking.oap.server.library.server.Server;
 import org.apache.skywalking.oap.server.library.server.ServerException;
 import org.apache.skywalking.oap.server.library.server.grpc.ssl.DynamicSslContext;
 import org.apache.skywalking.oap.server.library.server.pool.CustomThreadFactory;
-
+// 主要与agent进行通信
 @Slf4j
 public class GRPCServer implements Server {
 

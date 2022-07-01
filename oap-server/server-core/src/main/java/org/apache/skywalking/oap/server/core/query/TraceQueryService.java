@@ -94,6 +94,7 @@ public class TraceQueryService implements Service {
         );
     }
 
+    //
     public Trace queryTrace(final String traceId) throws IOException {
         Trace trace = new Trace();
 

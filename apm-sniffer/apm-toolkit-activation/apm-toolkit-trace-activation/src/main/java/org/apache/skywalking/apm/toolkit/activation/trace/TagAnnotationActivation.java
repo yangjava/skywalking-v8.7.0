@@ -37,6 +37,7 @@ import static org.apache.skywalking.apm.agent.core.plugin.match.logical.LogicalM
 /**
  * Intercepts all methods annotated with {@link org.apache.skywalking.apm.toolkit.trace.Tag}
  */
+// 对Tag注解的增强
 public class TagAnnotationActivation extends ClassEnhancePluginDefine {
 
     public static final String TAG_ANNOTATION_METHOD_INTERCEPTOR = "org.apache.skywalking.apm.toolkit.activation.trace.TagAnnotationMethodInterceptor";

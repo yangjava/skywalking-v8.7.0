@@ -30,25 +30,35 @@ import org.apache.skywalking.oap.server.telemetry.api.MetricsTag;
 /**
  * Starter core. Load the core configuration file, and initialize the startup sequence through {@link ModuleManager}.
  */
+// 由server-starter和server-starter-es7调用server-bootstrap
+// server-starter和server-starter-es7的区别在于maven中引入的存储模块Module不同
+// server-starter      storage-elasticsearch-plugin
+// server-starter-es7  storage-elasticsearch7-plugin
 @Slf4j
 public class OAPServerBootstrap {
     public static void start() {
+        // // 初始化mode为init或者no-init,表示是否初始化例如:底层存储组件等
         String mode = System.getProperty("mode");
         RunningMode.setMode(mode);
 
+        // 初始化ApplicationConfigurationd的加载器
         ApplicationConfigLoader configLoader = new ApplicationConfigLoader();
+        // 初始化Module的加载管理器
         ModuleManager manager = new ModuleManager();
         try {
+            // 加载yml生成ApplicationConfiguration配置
             ApplicationConfiguration applicationConfiguration = configLoader.load();
+            // 初始化模块 通过spi获取所有Module实现,基于yml配置加载spi中存在的相关实现
             manager.init(applicationConfiguration);
 
+            // 对 telemetry 模块进行特殊处理, 添加 uptime 的 Gauge, 用于标识服务开始运行
             manager.find(TelemetryModule.NAME)
                    .provider()
                    .getService(MetricsCreator.class)
                    .createGauge("uptime", "oap server start up time", MetricsTag.EMPTY_KEY, MetricsTag.EMPTY_VALUE)
                    // Set uptime to second
                    .setValue(System.currentTimeMillis() / 1000d);
-
+            // 如果是 Init 模式, 现在就直接退出, 否则就继续运行
             if (RunningMode.isInitMode()) {
                 log.info("OAP starts up in init mode successfully, exit now...");
                 System.exit(0);

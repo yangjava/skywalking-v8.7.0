@@ -28,12 +28,13 @@ import org.slf4j.LoggerFactory;
 /**
  * A module definition.
  */
+// 模块定义
 public abstract class ModuleDefine implements ModuleProviderHolder {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ModuleDefine.class);
 
     private ModuleProvider loadedProvider = null;
-
+    // 模块名
     private final String name;
 
     public ModuleDefine(String name) {
@@ -51,6 +52,7 @@ public abstract class ModuleDefine implements ModuleProviderHolder {
     /**
      * @return the {@link Service} provided by this module.
      */
+    // 实现类可以定义模块提供的服务类
     public abstract Class[] services();
 
     /**
@@ -60,13 +62,15 @@ public abstract class ModuleDefine implements ModuleProviderHolder {
      * @param configuration of this module
      * @throws ProviderNotFoundException when even don't find a single one providers.
      */
+    // 准备阶段，找到configuration配置类对应的ModuleProvider对象，进行初始化操作
     void prepare(ModuleManager moduleManager, ApplicationConfiguration.ModuleConfiguration configuration,
         ServiceLoader<ModuleProvider> moduleProviderLoader) throws ProviderNotFoundException, ServiceNotProvidedException, ModuleConfigException, ModuleStartException {
+        // 读取所有 ModuleProvider 实例, 找到和当前 ModuleDefine 匹配的 Provider
         for (ModuleProvider provider : moduleProviderLoader) {
             if (!configuration.has(provider.name())) {
                 continue;
             }
-
+            // 在 ModuleProvider 注入 ModuleDefine实例和 moduleManager 实例, 并将 provider 设置到当前 ModuleDefine 中
             if (provider.module().equals(getClass())) {
                 if (loadedProvider == null) {
                     loadedProvider = provider;
@@ -87,6 +91,8 @@ public abstract class ModuleDefine implements ModuleProviderHolder {
         }
 
         LOGGER.info("Prepare the {} provider in {} module.", loadedProvider.name(), this.name());
+
+        // 执行 ModuleProvider 配置初始化, 通过 ModuleDefine#copyProperties 方法 从 ApplicationConfiguration 中复制属性到当前 provider中
         try {
             copyProperties(loadedProvider.createConfigBeanIfAbsent(), configuration.getProviderConfiguration(loadedProvider
                 .name()), this.name(), loadedProvider.name());
@@ -95,7 +101,7 @@ public abstract class ModuleDefine implements ModuleProviderHolder {
         }
         loadedProvider.prepare();
     }
-
+    // 使用反射复制属性
     private void copyProperties(ModuleConfig dest, Properties src, String moduleName,
         String providerName) throws IllegalAccessException {
         if (dest == null) {
@@ -128,7 +134,7 @@ public abstract class ModuleDefine implements ModuleProviderHolder {
 
         throw new NoSuchFieldException();
     }
-
+    // 获取模块定义对应的Provider对象
     @Override
     public final ModuleProvider provider() throws DuplicateProviderException, ProviderNotFoundException {
         if (loadedProvider == null) {

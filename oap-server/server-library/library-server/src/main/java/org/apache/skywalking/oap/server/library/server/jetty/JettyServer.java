@@ -31,7 +31,7 @@ import org.eclipse.jetty.servlet.ServletMapping;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+// 主要与skywalking-UI进行通信
 public class JettyServer implements Server {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JettyServer.class);

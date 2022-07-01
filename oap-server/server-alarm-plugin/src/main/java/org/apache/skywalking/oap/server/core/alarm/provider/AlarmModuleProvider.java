@@ -55,17 +55,20 @@ public class AlarmModuleProvider extends ModuleProvider {
 
     @Override
     public void prepare() throws ServiceNotProvidedException, ModuleStartException {
+        // 读取alarm-setting.yml告警配置文件
         Reader applicationReader;
         try {
             applicationReader = ResourceUtils.read("alarm-settings.yml");
         } catch (FileNotFoundException e) {
             throw new ModuleStartException("can't load alarm-settings.yml", e);
         }
+        // 将告警规则文件映射为Rules对象
         RulesReader reader = new RulesReader(applicationReader);
         Rules rules = reader.readRules();
 
         alarmRulesWatcher = new AlarmRulesWatcher(rules, this);
 
+        // 告警服务实现类，处理告警逻辑
         notifyHandler = new NotifyHandler(alarmRulesWatcher, getManager());
         notifyHandler.init(new AlarmStandardPersistence(getManager()));
         this.registerServiceImplementation(MetricsNotify.class, notifyHandler);

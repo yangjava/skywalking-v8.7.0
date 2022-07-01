@@ -34,7 +34,7 @@ import org.apache.skywalking.oap.server.core.query.type.TraceState;
 import org.apache.skywalking.oap.server.library.module.ModuleManager;
 
 import static java.util.Objects.nonNull;
-
+// OAP Trace查询
 public class TraceQuery implements GraphQLQueryResolver {
 
     private final ModuleManager moduleManager;
@@ -44,6 +44,7 @@ public class TraceQuery implements GraphQLQueryResolver {
         this.moduleManager = moduleManager;
     }
 
+    // 获取TraceQueryService服务
     private TraceQueryService getQueryService() {
         if (queryService == null) {
             this.queryService = moduleManager.find(CoreModule.NAME).provider().getService(TraceQueryService.class);
@@ -51,13 +52,16 @@ public class TraceQuery implements GraphQLQueryResolver {
         return queryService;
     }
 
+    // 查询Trace
     public TraceBrief queryBasicTraces(final TraceQueryCondition condition) throws IOException {
         long startSecondTB = 0;
         long endSecondTB = 0;
         String traceId = Const.EMPTY_STRING;
 
+        // traceId查询条件
         if (!Strings.isNullOrEmpty(condition.getTraceId())) {
             traceId = condition.getTraceId();
+        // 开始时间StartTimeBucketInSec-结束时间EndTimeBucketInSec
         } else if (nonNull(condition.getQueryDuration())) {
             startSecondTB = condition.getQueryDuration().getStartTimeBucketInSec();
             endSecondTB = condition.getQueryDuration().getEndTimeBucketInSec();
@@ -79,6 +83,7 @@ public class TraceQuery implements GraphQLQueryResolver {
         );
     }
 
+    // 通过traceId查询Trace
     public Trace queryTrace(final String traceId) throws IOException {
         return getQueryService().queryTrace(traceId);
     }

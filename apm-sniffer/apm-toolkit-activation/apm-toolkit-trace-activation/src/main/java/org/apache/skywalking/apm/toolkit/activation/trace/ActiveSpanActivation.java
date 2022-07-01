@@ -34,24 +34,30 @@ import static org.apache.skywalking.apm.agent.core.plugin.bytebuddy.ArgumentType
  * {@link TraceAnnotationActivation} enhance the <code>tag</code> method of <code>ActiveSpan</code> by
  * <code>ActiveSpanTagInterceptor</code>.
  */
+// ActiveSpan增强，静态方法增强
 public class ActiveSpanActivation extends ClassStaticMethodsEnhancePluginDefine {
 
     private static final String ENHANCE_CLASS = "org.apache.skywalking.apm.toolkit.trace.ActiveSpan";
 
+    // 对tag方法的增强
     private static final String TAG_INTERCEPTOR_CLASS = "org.apache.skywalking.apm.toolkit.activation.trace.ActiveSpanTagInterceptor";
     private static final String TAG_INTERCEPTOR_METHOD_NAME = "tag";
 
+    // 对error方法的增强
     private static final String ERROR_INTERCEPTOR_METHOD_NAME = "error";
     private static final String ERROR_INTERCEPTOR_CLASS = "org.apache.skywalking.apm.toolkit.activation.trace.ActiveSpanErrorInterceptor";
     private static final String ERROR_MSG_INTERCEPTOR_CLASS = "org.apache.skywalking.apm.toolkit.activation.trace.ActiveSpanErrorMsgInterceptor";
     private static final String ERROR_THROWABLE_INTERCEPTOR_CLASS = "org.apache.skywalking.apm.toolkit.activation.trace.ActiveSpanErrorThrowableInteceptor";
 
+    // 对debug方法的增强
     private static final String DEBUG_INTERCEPTOR_METHOD_NAME = "debug";
     private static final String DEBUG_INTERCEPTOR_CLASS = "org.apache.skywalking.apm.toolkit.activation.trace.ActiveSpanDebugInterceptor";
 
+    // 对info方法的增强
     private static final String INFO_INTERCEPTOR_METHOD_NAME = "info";
     private static final String INFO_INTERCEPTOR_CLASS = "org.apache.skywalking.apm.toolkit.activation.trace.ActiveSpanInfoInterceptor";
 
+    // 对操作名称的增强
     private static final String SET_OPERATION_NAME_METHOD_NAME = "setOperationName";
     private static final String SET_OPERATION_NAME_INTERCEPTOR_CLASS = "org.apache.skywalking.apm.toolkit.activation.trace.ActiveSpanSetOperationNameInterceptor";
 

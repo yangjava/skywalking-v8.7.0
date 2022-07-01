@@ -18,6 +18,7 @@
 
 package org.apache.skywalking.oap.server.core.query.type;
 
+// 查询排序
 public enum QueryOrder {
     BY_START_TIME, BY_DURATION
 }

@@ -18,6 +18,7 @@
 
 package org.apache.skywalking.oap.server.core;
 
+// 常量
 public class Const {
     public static final int NONE = 0;
     public static final String SERVICE_ID_CONNECTOR = ".";

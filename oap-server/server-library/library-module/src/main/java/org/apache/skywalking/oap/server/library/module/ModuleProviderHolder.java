@@ -17,8 +17,8 @@
  */
 
 package org.apache.skywalking.oap.server.library.module;
-
+// 模块定义类需要实现的接口，提供获取模块的服务类功能，通过该接口，可以获取模块Provider对象对应的Service持有接口，从而拿到模块Provider对象对应的服务对象
 public interface ModuleProviderHolder {
-
+    // 获取模块提供对象
     ModuleServiceHolder provider() throws DuplicateProviderException, ProviderNotFoundException;
 }

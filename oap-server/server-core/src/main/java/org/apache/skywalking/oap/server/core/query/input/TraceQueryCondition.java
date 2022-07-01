@@ -26,19 +26,32 @@ import org.apache.skywalking.oap.server.core.query.type.Pagination;
 import org.apache.skywalking.oap.server.core.query.type.QueryOrder;
 import org.apache.skywalking.oap.server.core.query.type.TraceState;
 
+// Trace查询条件
 @Getter
 @Setter
 public class TraceQueryCondition {
+    // 服务Id
     private String serviceId;
+    // 服务实例Id
     private String serviceInstanceId;
+    // 链路Id
     private String traceId;
+    // 端点
     private String endpointName;
+    // 端点Id
     private String endpointId;
+    // 时间区间
     private Duration queryDuration;
+    // 持续时间
     private int minTraceDuration;
+    // 持续时间
     private int maxTraceDuration;
+    // 链路状态
     private TraceState traceState;
+    // 排序
     private QueryOrder queryOrder;
+    // 分页参数
     private Pagination paging;
+    //  链路Tag,支持多个查询
     private List<Tag> tags;
 }

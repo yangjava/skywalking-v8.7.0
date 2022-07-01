@@ -17,10 +17,10 @@
  */
 
 package org.apache.skywalking.oap.server.library.module;
-
+// 模块管理类需要实现的接口，提供查找模块相关功能
 public interface ModuleDefineHolder {
-
+    // 判断是否有该模块
     boolean has(String moduleName);
-
+    // 通过模块名获取模块定义对象
     ModuleProviderHolder find(String moduleName) throws ModuleNotFoundRuntimeException;
 }

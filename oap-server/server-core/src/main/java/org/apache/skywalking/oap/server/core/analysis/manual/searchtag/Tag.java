@@ -27,6 +27,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apache.skywalking.oap.server.library.util.CollectionUtils;
 
+// 链路Tag查询条件
 @Getter
 @Setter
 @EqualsAndHashCode

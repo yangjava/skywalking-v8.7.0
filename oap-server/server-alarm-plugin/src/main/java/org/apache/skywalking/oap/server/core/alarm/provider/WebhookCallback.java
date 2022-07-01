@@ -40,6 +40,7 @@ import org.apache.skywalking.oap.server.core.alarm.AlarmMessage;
 /**
  * Use SkyWalking alarm webhook API call a remote endpoints.
  */
+// 用于通过Webhook推送告警信息
 @Slf4j
 public class WebhookCallback implements AlarmCallback {
     private static final int HTTP_CONNECT_TIMEOUT = 1000;

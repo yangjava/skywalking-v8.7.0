@@ -17,7 +17,7 @@
  */
 
 package org.apache.skywalking.oap.server.starter.config;
-
+// 配置加载接口
 public interface ConfigLoader<T> {
     T load() throws ConfigFileNotFoundException;
 }

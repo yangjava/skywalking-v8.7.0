@@ -37,6 +37,7 @@ import java.util.List;
 /**
  * Save the alarm info into storage for UI query.
  */
+// 用于持久化告警信息
 public class AlarmStandardPersistence implements AlarmCallback {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AlarmStandardPersistence.class);

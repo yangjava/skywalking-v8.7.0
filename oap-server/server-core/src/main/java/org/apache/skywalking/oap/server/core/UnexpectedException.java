@@ -17,7 +17,7 @@
  */
 
 package org.apache.skywalking.oap.server.core;
-
+// 异常 UnexpectedException
 public class UnexpectedException extends RuntimeException {
     public UnexpectedException(String message) {
         super(message);

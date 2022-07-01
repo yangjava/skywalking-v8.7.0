@@ -21,6 +21,7 @@ package org.apache.skywalking.oap.server.starter;
 /**
  * OAP starter
  */
+// main 方法跑完了为什么还能继续运行?? 通过设置 GRPCServer 中 ThreadPoolExecutor 的 CustomThreadFactory, 设置线程为非守护线程, 这样 grpc 没关闭情况下不会退出
 public class OAPServerStartUp {
     public static void main(String[] args) {
         OAPServerBootstrap.start();

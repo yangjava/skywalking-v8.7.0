@@ -17,6 +17,6 @@
  */
 
 package org.apache.skywalking.oap.server.library.module;
-
+// 模块配置类，模块定义类会将ProviderConfiguration 映射为 ModuleConfig
 public abstract class ModuleConfig {
 }

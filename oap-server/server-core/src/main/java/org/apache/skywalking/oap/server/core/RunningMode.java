@@ -23,6 +23,7 @@ import com.google.common.base.Strings;
 /**
  * The running mode of the OAP server.
  */
+// 运行Mode init和no-init
 public class RunningMode {
     private static String MODE = "";
 

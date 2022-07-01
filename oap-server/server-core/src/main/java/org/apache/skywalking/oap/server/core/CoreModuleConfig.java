@@ -25,6 +25,7 @@ import lombok.Setter;
 import org.apache.skywalking.oap.server.core.source.ScopeDefaultColumn;
 import org.apache.skywalking.oap.server.library.module.ModuleConfig;
 
+// 核心模块配置
 @Getter
 public class CoreModuleConfig extends ModuleConfig {
     private String role = "Mixed";
@@ -72,12 +73,12 @@ public class CoreModuleConfig extends ModuleConfig {
     /**
      * The time to live of all metrics data. Unit is day.
      */
-
+    // metrics记录保存时间 3天
     private int metricsDataTTL = 3;
     /**
      * The time to live of all record data, including tracing. Unit is Day.
      */
-
+    // trace记录保存时间 7天
     private int recordDataTTL = 7;
 
     private int gRPCThreadPoolSize;

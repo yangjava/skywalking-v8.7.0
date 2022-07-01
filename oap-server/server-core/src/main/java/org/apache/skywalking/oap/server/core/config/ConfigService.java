@@ -21,13 +21,18 @@ package org.apache.skywalking.oap.server.core.config;
 import lombok.Getter;
 import org.apache.skywalking.oap.server.core.CoreModuleConfig;
 import org.apache.skywalking.oap.server.library.module.Service;
-
+// 配置服务
 @Getter
 public class ConfigService implements Service {
+    // GRPC的IP地址
     private final String gRPCHost;
+    // GRPC的端口号
     private final int gRPCPort;
+    // 可以查询的TracesTags
     private final String searchableTracesTags;
+    // 可以查询的LogsTags
     private final String searchableLogsTags;
+    // 可以查询的AlarmTags
     private final String searchableAlarmTags;
 
     public ConfigService(CoreModuleConfig moduleConfig) {

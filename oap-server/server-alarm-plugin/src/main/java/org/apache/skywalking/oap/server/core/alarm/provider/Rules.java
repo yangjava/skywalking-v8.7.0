@@ -34,7 +34,9 @@ import org.apache.skywalking.oap.server.core.alarm.provider.welink.WeLinkSetting
 @Getter
 @ToString
 public class Rules {
+    // 告警规则列表
     private List<AlarmRule> rules;
+    // webhook发送地址
     private List<String> webhooks;
     private GRPCAlarmSetting grpchookSetting;
     private SlackSettings slacks;

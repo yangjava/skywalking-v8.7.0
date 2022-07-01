@@ -68,16 +68,22 @@ public class CoreModule extends ModuleDefine {
     @Override
     public Class[] services() {
         List<Class> classes = new ArrayList<>();
+        // 配置服务
         classes.add(ConfigService.class);
+        // 降采样
         classes.add(DownSamplingConfigService.class);
+        // 名称管理服务
         classes.add(NamingControl.class);
         classes.add(IComponentLibraryCatalogService.class);
 
+        // 远程工作实例获取类
         classes.add(IWorkerInstanceGetter.class);
+        // 远程工作实例配置类
         classes.add(IWorkerInstanceSetter.class);
 
         classes.add(MeterSystem.class);
 
+        //添加服务注册类
         addServerInterface(classes);
         addReceiverInterface(classes);
         addInsideService(classes);
@@ -120,8 +126,11 @@ public class CoreModule extends ModuleDefine {
         classes.add(EventQueryService.class);
     }
 
+    // 负责内置GRPC和jetty服务器,并允许向服务器注册handler接收不同业务消息
     private void addServerInterface(List<Class> classes) {
+        // 负责GRPC协议处理
         classes.add(GRPCHandlerRegister.class);
+        // 负责Jetty协议处理
         classes.add(JettyHandlerRegister.class);
     }
 
@@ -133,10 +142,12 @@ public class CoreModule extends ModuleDefine {
         classes.add(RemoteSenderService.class);
     }
 
+    // 负责读取数据时的存储层缓存,降低对存储的压力
     private void addCacheService(List<Class> classes) {
         classes.add(NetworkAddressAliasCache.class);
     }
 
+    // SourceReceiver底层通过分发器指定流式数据的Processor处理器
     private void addReceiverInterface(List<Class> classes) {
         classes.add(SourceReceiver.class);
     }

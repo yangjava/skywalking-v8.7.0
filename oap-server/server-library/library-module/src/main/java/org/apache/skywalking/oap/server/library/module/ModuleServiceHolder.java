@@ -17,11 +17,11 @@
  */
 
 package org.apache.skywalking.oap.server.library.module;
-
+// 模块提供类需要实现的接口，提供注册服务实现、获取服务对象的功能
 public interface ModuleServiceHolder {
-
+    // 注册服务实现对象
     void registerServiceImplementation(Class<? extends Service> serviceType,
         Service service) throws ServiceNotProvidedException;
-
+    // 获取服务实现对象
     <T extends Service> T getService(Class<T> serviceType) throws ServiceNotProvidedException;
 }

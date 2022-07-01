@@ -170,7 +170,7 @@ public class CoreModuleProvider extends ModuleProvider {
         } catch (FileNotFoundException e) {
             throw new ModuleStartException(e.getMessage(), e);
         }
-
+        // 通过annotationScan.registerListener注册StreamAnnotationListener start阶段annotationScan会扫描所有的@stream注解,在扫描完成后会通过notify调用StreamAnnotationListener的create方法完成StorageModels.models填充
         AnnotationScan scopeScan = new AnnotationScan();
         scopeScan.registerListener(new DefaultScopeDefine.Listener());
         try {
@@ -180,7 +180,7 @@ public class CoreModuleProvider extends ModuleProvider {
         }
 
         this.registerServiceImplementation(MeterSystem.class, new MeterSystem(getManager()));
-
+        // oal[观测分析语言]解析引擎
         AnnotationScan oalDisable = new AnnotationScan();
         oalDisable.registerListener(DisableRegister.INSTANCE);
         oalDisable.registerListener(new DisableRegister.SingleDisableScanListener());
@@ -190,6 +190,7 @@ public class CoreModuleProvider extends ModuleProvider {
             throw new ModuleStartException(e.getMessage(), e);
         }
 
+        // 创建GRPCServer 支持grpc协议 响应agent
         if (moduleConfig.isGRPCSslEnabled()) {
             grpcServer = new GRPCServer(moduleConfig.getGRPCHost(), moduleConfig.getGRPCPort(),
                                         moduleConfig.getGRPCSslCertChainPath(),
@@ -212,6 +213,7 @@ public class CoreModuleProvider extends ModuleProvider {
         }
         grpcServer.initialize();
 
+        // 创建jettyServer 支持http协议,响应Skywalking-UI
         JettyServerConfig jettyServerConfig = JettyServerConfig.builder()
                                                                .host(moduleConfig.getRestHost())
                                                                .port(moduleConfig.getRestPort())
@@ -229,6 +231,7 @@ public class CoreModuleProvider extends ModuleProvider {
         jettyServer = new JettyServer(jettyServerConfig);
         jettyServer.initialize();
 
+        // 注册GRPCHandlerRegister和JettyHandlerRegister,通过addHandler增加对不同请求的处理
         this.registerServiceImplementation(ConfigService.class, new ConfigService(moduleConfig));
         this.registerServiceImplementation(
             DownSamplingConfigService.class, new DownSamplingConfigService(moduleConfig.getDownsampling()));
@@ -237,7 +240,7 @@ public class CoreModuleProvider extends ModuleProvider {
         this.registerServiceImplementation(JettyHandlerRegister.class, new JettyHandlerRegisterImpl(jettyServer));
 
         this.registerServiceImplementation(IComponentLibraryCatalogService.class, new ComponentLibraryCatalogService());
-
+        // 注册receiver,可将server端接收到的agent数据进行分发处理
         this.registerServiceImplementation(SourceReceiver.class, receiver);
 
         WorkerInstancesService instancesService = new WorkerInstancesService();
@@ -252,6 +255,7 @@ public class CoreModuleProvider extends ModuleProvider {
         this.registerServiceImplementation(
             NetworkAddressAliasCache.class, new NetworkAddressAliasCache(moduleConfig));
 
+        // skywalking - ui面板查询相关
         this.registerServiceImplementation(TopologyQueryService.class, new TopologyQueryService(getManager()));
         this.registerServiceImplementation(MetricsMetadataQueryService.class, new MetricsMetadataQueryService());
         this.registerServiceImplementation(MetricsQueryService.class, new MetricsQueryService(getManager()));
@@ -265,6 +269,7 @@ public class CoreModuleProvider extends ModuleProvider {
         this.registerServiceImplementation(EventQueryService.class, new EventQueryService(getManager()));
 
         // add profile service implementations
+        // 处理@Stream注解
         this.registerServiceImplementation(
             ProfileTaskMutationService.class, new ProfileTaskMutationService(getManager()));
         this.registerServiceImplementation(
@@ -314,14 +319,18 @@ public class CoreModuleProvider extends ModuleProvider {
 
     @Override
     public void start() throws ModuleStartException {
+        // 负责OAP集群节点之间的通信
         grpcServer.addHandler(new RemoteServiceHandler(getManager()));
+        // 负责外部比如consul等对节点自身的服务健康检查
         grpcServer.addHandler(new HealthCheckServiceHandler());
+        // 提供集群的读写能力,内部借助定时任务自动刷新集群信息
         remoteClientManager.start();
 
         // Disable OAL script has higher priority
         oalEngineLoaderService.load(DisableOALDefine.INSTANCE);
 
         try {
+            //自动扫描源码中的SourceDispatcher实现并获取其处理的Source泛型对象的scopeid构建scopeid到SourceDispatcher的映射
             receiver.scan();
             annotationScan.scan();
         } catch (IOException | IllegalAccessException | InstantiationException | StorageException e) {
@@ -330,6 +339,7 @@ public class CoreModuleProvider extends ModuleProvider {
 
         Address gRPCServerInstanceAddress = new Address(moduleConfig.getGRPCHost(), moduleConfig.getGRPCPort(), true);
         TelemetryRelatedContext.INSTANCE.setId(gRPCServerInstanceAddress.toString());
+        // 集群角色为Mixed和Aggregator则参与集群注册,Receiver不参与集群注册
         if (CoreModuleConfig.Role.Mixed.name()
                                        .equalsIgnoreCase(
                                            moduleConfig.getRole())
@@ -357,6 +367,7 @@ public class CoreModuleProvider extends ModuleProvider {
 
     @Override
     public void notifyAfterCompleted() throws ModuleStartException {
+        // 启动grpc服务器和jetty服务器 开始正式对外提供工作
         try {
             grpcServer.start();
             jettyServer.start();
@@ -364,12 +375,15 @@ public class CoreModuleProvider extends ModuleProvider {
             throw new ModuleStartException(e.getMessage(), e);
         }
 
+        // 每5秒持久化数据
         PersistenceTimer.INSTANCE.start(getManager(), moduleConfig);
 
+        //  skywalking采集的数据量很大,按规则对数据集进行清理
         if (moduleConfig.isEnableDataKeeperExecutor()) {
             DataTTLKeeperTimer.INSTANCE.start(getManager(), moduleConfig);
         }
 
+        // 缓存更新
         CacheUpdateTimer.INSTANCE.start(getManager(), moduleConfig.getMetricsDataTTL());
 
         try {

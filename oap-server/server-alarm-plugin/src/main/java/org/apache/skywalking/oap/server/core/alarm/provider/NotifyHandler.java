@@ -46,6 +46,7 @@ import org.apache.skywalking.oap.server.library.module.ModuleManager;
 
 @Slf4j
 public class NotifyHandler implements MetricsNotify {
+    // 告警核心处理
     private final AlarmCore core;
     private final AlarmRulesWatcher alarmRulesWatcher;
     private final ModuleManager manager;

@@ -30,6 +30,7 @@ import org.apache.skywalking.oap.server.core.storage.StorageException;
 /**
  * Scan the annotation, and notify the listener(s)
  */
+// 先注册一个AnnotationListener子类,后扫描所有classes并获取class上有AnnotationListener.annotation指定的注解类,调用AnnotationListener.notify
 public class AnnotationScan {
 
     private final List<AnnotationListenerCache> listeners;
